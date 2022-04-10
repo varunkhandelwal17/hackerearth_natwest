@@ -10,17 +10,21 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.natwesthackerearth.model.ProcessingRequest;
 import com.natwesthackerearth.model.TransactionRequest;
+import com.natwesthackerearth.repository.TransactionRepository;
 import com.natwesthackerearth.util.EncryptDecryptUtil;
 
 @Service
 public class ProcessService {
 
 	@Autowired
-	EncryptDecryptUtil encryptDecryptUtil;
+	private EncryptDecryptUtil encryptDecryptUtil;
 
 	@Autowired
 	@Qualifier("objectMapper")
 	private ObjectMapper objectMapper;
+	
+	@Autowired
+	private TransactionRepository transactionRepository;
 
 	Logger logger = LoggerFactory.getLogger(ProcessService.class);
 
@@ -37,6 +41,7 @@ public class ProcessService {
 					transactionRequest = objectMapper.readValue(decryptedRequest, TransactionRequest.class);
 					if (transactionRequest != null) {
 						// TODO: Insert transaction request values into DB
+						transactionRepository.save(transactionRequest);
 					}
 				} catch (JsonProcessingException e) {
 					logger.error(
